@@ -34,4 +34,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     print("Enviando: " + Message)
 
     print(data.decode('utf-8'))
+    Recieve = data.decode('utf-8').split(" ")
+    if Recieve[6] == "OK":
+        my_socket.connect((Server_Ip, int(Server_Port)))
+        my_socket.send(bytes("ACK sip:" + Message, 'utf-8') + b'\r\n')
+        data = my_socket.recv(1024)
+
 print("Fin.")
