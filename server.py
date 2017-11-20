@@ -51,5 +51,7 @@ if __name__ == "__main__":
             fichero_audio = sys.argv[3]
             print("Listening...")
             serv.serve_forever()
+        else:
+            print("Usage: python3 server.py IP port audio_file")
     except:
         sys.exit("Usage: python3 server.py IP port audio_file")
