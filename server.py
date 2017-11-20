@@ -47,8 +47,9 @@ if __name__ == "__main__":
     # Creamos servidor de eco y escuchamos
     serv = socketserver.UDPServer((sys.argv[1], int(sys.argv[2])), EchoHandler)
     try:
-        fichero_audio = sys.argv[3]
-        print("Lanzando servidor UDP de eco...")
-        serv.serve_forever()
+        if os.path.isfile(sys.argv[3]):
+            fichero_audio = sys.argv[3]
+            print("Listening...")
+            serv.serve_forever()
     except:
         sys.exit("Usage: python3 server.py IP port audio_file")
