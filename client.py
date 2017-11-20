@@ -44,7 +44,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     elif Recieve[1] == "100":
         print(data.decode('utf-8'))
         my_socket.connect((Server_Ip, int(Server_Port)))
-        my_socket.send(bytes("ACK sip:" + User_Name + Server_Ip +
+        my_socket.send(bytes("ACK sip:" + User_Name + "@" + Server_Ip +
                              " SIP/2.0", 'utf-8') + b'\r\n\r\n')
         data = my_socket.recv(1024)
     else:
