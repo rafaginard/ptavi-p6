@@ -12,9 +12,6 @@ import sys
 # Dirección IP del servidor.
 METHOD = ""
 SIP_Data = []
-# Contenido que vamos a enviar
-LINE = 'INVITE sip:'
-
 # Creamos el socket, lo configuramos y lo atamos a un servidor/puerto
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -26,18 +23,29 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     Server_Port = SIP_Data[2]
     if METHOD == "INVITE":
         my_socket.connect((Server_Ip, int(Server_Port)))
-        my_socket.send(bytes(LINE + Message, 'utf-8') + b'\r\n')
+        my_socket.send(bytes(METHOD + " sip:" + User_Name + "@" + Server_Ip +
+                             " SIP/2.0", 'utf-8') + b'\r\n\r\n')
         data = my_socket.recv(1024)
     elif METHOD == "BYE":
-        my_socket.send(bytes("BYE sip:" + Message , 'utf-8') + b'\r\n')
-        data = my_socket.recv(1024)
-    print("Enviando: " + Message)
-
-    print(data.decode('utf-8'))
-    Recieve = data.decode('utf-8').split(" ")
-    if Recieve[6] == "OK":
         my_socket.connect((Server_Ip, int(Server_Port)))
-        my_socket.send(bytes("ACK sip:" + Message, 'utf-8') + b'\r\n')
+        my_socket.send(bytes(METHOD + " sip:" +  User_Name + "@" + Server_Ip +
+                             " SIP/2.0", 'utf-8') + b'\r\n\r\n')
+        data = my_socket.recv(1024)
+    else:
+        my_socket.connect((Server_Ip, int(Server_Port)))
+        my_socket.send(bytes(METHOD + " sip:" + User_Name + "@" + Server_Ip +
+                             " SIP/2.0", 'utf-8') + b'\r\n\r\n')
         data = my_socket.recv(1024)
 
-print("Fin.")
+#   Recibe el cliente 200 OK
+    Recieve = data.decode('utf-8').split(" ")
+    if Recieve[1] == "200":
+        print(data.decode('utf-8'))
+    elif Recieve[1] == "100":
+        print(data.decode('utf-8'))
+        my_socket.connect((Server_Ip, int(Server_Port)))
+        my_socket.send(bytes("ACK sip:" + User_Name + Server_Ip +
+                             " SIP/2.0", 'utf-8') + b'\r\n\r\n')
+        data = my_socket.recv(1024)
+    else:
+        print(data.decode('utf-8'))
