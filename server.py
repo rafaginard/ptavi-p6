@@ -24,9 +24,8 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                 Check_Data = False
                 print(line.decode('utf-8'))
                 DATA = line.decode('utf-8').split(" ")
-                print(len(DATA))
                 if len(DATA) == 3:
-                    if DATA[1].find(" sip:") and DATA[2] == (" SIP/2.0"):
+                    if DATA[1].split(":")[0] == ("sip") and DATA[2] == ("SIP/2.0\r\n\r\n"):
                         Check_Data = True
                 if DATA[0] == "INVITE" and Check_Data:
                     self.wfile.write(b"SIP/2.0 100 Trying\r\n\r\n")
