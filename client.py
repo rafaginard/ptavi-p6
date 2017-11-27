@@ -21,21 +21,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     User_Name = SIP_Data[0]
     Server_Ip = SIP_Data[1]
     Server_Port = SIP_Data[2]
-    if METHOD == "INVITE":
-        my_socket.connect((Server_Ip, int(Server_Port)))
-        my_socket.send(bytes(METHOD + " sip:" + User_Name + "@" + Server_Ip +
-                             " SIP/2.0", 'utf-8') + b'\r\n\r\n')
-        data = my_socket.recv(1024)
-    elif METHOD == "BYE":
-        my_socket.connect((Server_Ip, int(Server_Port)))
-        my_socket.send(bytes(METHOD + " sip:" +  User_Name + "@" + Server_Ip +
-                             " SIP/2.0", 'utf-8') + b'\r\n\r\n')
-        data = my_socket.recv(1024)
-    else:
-        my_socket.connect((Server_Ip, int(Server_Port)))
-        my_socket.send(bytes(METHOD + " sip:" + User_Name + "@" + Server_Ip +
-                             " SIP/2.0", 'utf-8') + b'\r\n\r\n')
-        data = my_socket.recv(1024)
+
+    my_socket.connect((Server_Ip, int(Server_Port)))
+    my_socket.send(bytes(METHOD + " sip:" + User_Name + "@" + Server_Ip +
+                         " SIP/2.0", 'utf-8') + b'\r\n\r\n')
+    data = my_socket.recv(1024)
 
 #   Recibe el cliente 200 OK
     Recieve = data.decode('utf-8').split(" ")
