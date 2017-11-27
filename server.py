@@ -15,45 +15,41 @@ class EchoHandler(socketserver.DatagramRequestHandler):
     Echo server class
     """
 
-    def Comprobar_Peticion(self, DATA):
-        print(DATA)
-        if len(DATA) == 3:
-            condition_sip = DATA[1].split(":")[0] == ("sip")
-            condition_final = DATA[2] == ("SIP/2.0\r\n\r\n")
+    def Comprobar_Peticion(self):
+        if len(self.DATA) == 3:
+            condition_sip = self.DATA[1].split(":")[0] == ("sip")
+            condition_final = self.DATA[2] == ("SIP/2.0\r\n\r\n")
             condition_arroba = False
-            if DATA[1].find("@") != -1:
+            if self.DATA[1].find("@") != -1:
                 condition_arroba = True
             if condition_sip and condition_arroba and condition_final:
                 self.check = True
+        return self.check
 
     def handle(self):
         self.check = False
+        line = self.rfile.read()
+        print(line.decode('utf-8'))
+        if line:
+            self.DATA = line.decode('utf-8').split(" ")
 
-        # Escribe dirección y puerto del cliente (de tupla client_address)
-        #while 1:
-            # Leyendo línea a línea lo que nos envía el cliente
-        self.line = self.rfile.read()
-        print(self.line.decode('utf-8'))
-
-        if self.line:
-
-            DATA = self.line.decode('utf-8').split(" ")
-            print(self.Comprobar_Peticion(DATA))
-            if self.Comprobar_Peticion(DATA):
-                if DATA[0] == "INVITE":
+            if self.Comprobar_Peticion():
+                if self.DATA[0] == "INVITE":
                     self.wfile.write(b"SIP/2.0 100 Trying\r\n\r\n")
                     self.wfile.write(b"SIP/2.0 180 Ringing\r\n\r\n")
                     self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
-                elif DATA[0] == "BYE":
+                elif self.DATA[0] == "BYE":
                     self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
-                elif DATA[0] == "ACK":
+                elif self.DATA[0] == "ACK":
                     fichero_audio = sys.argv[3]
                     aEjecutar = "mp32rtp -i 127.0.0.1 -p 23032 < " + fichero_audio
                     os.system(aEjecutar)
-                elif DATA[0] != ("INVITE" or "ACK" or "BYE"):
+                elif self.DATA[0] != ("INVITE" or "ACK" or "BYE"):
                     self.wfile.write(b"SIP/2.0 405 Method Not Allowed\r\n\r\n")
             else:
                 self.wfile.write(b"SIP/2.0 400 Bad Request\r\n\r\n")
+        if not line:
+            pass
 
 if __name__ == "__main__":
     # Creamos servidor de eco y escuchamos
