@@ -9,7 +9,6 @@ import socketserver
 import sys
 
 
-
 class EchoHandler(socketserver.DatagramRequestHandler):
     """
     Echo server class
@@ -41,8 +40,8 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                 elif self.DATA[0] == "BYE":
                     self.wfile.write(b"SIP/2.0 200 OK\r\n\r\n")
                 elif self.DATA[0] == "ACK":
-                    fichero_audio = sys.argv[3]
-                    aEjecutar = "mp32rtp -i 127.0.0.1 -p 23032 < " + fichero_audio
+                    audio = sys.argv[3]
+                    aEjecutar = "mp32rtp -i 127.0.0.1 -p 23032 < " + audio
                     os.system(aEjecutar)
                 elif self.DATA[0] != ("INVITE" or "ACK" or "BYE"):
                     self.wfile.write(b"SIP/2.0 405 Method Not Allowed\r\n\r\n")
