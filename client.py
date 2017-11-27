@@ -17,7 +17,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as my_socket:
     my_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     METHOD = sys.argv[1]
     Message = sys.argv[2]
-    SIP_Data = Message.replace(":","@").split("@")
+    SIP_Data = Message.replace(":", "@").split("@")
     User_Name = SIP_Data[0]
     Server_Ip = SIP_Data[1]
     Server_Port = SIP_Data[2]
